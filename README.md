@@ -46,5 +46,5 @@ Interestingly, other `addi` operations with `rd` as the `x0` register decode as
 
 ## Useful Links
 
-https://stackoverflow.com/questions/1484817/how-do-i-make-a-simple-makefile-for-gcc-on-linux
-https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf
+<https://stackoverflow.com/questions/1484817/how-do-i-make-a-simple-makefile-for-gcc-on-linux>
+<https://riscv.org/wp-content/uploads/2017/05/riscv-spec-v2.2.pdf>
