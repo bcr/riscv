@@ -28,6 +28,7 @@ struct instruction_entry
 
 static const struct instruction_entry instructions[] = {
     { .mask = OPCODE_MASK, .match = 0x37, .opcode = "lui", .instruction_type = I_U },
+    { .mask = OPCODE_MASK, .match = 0x17, .opcode = "auipc", .instruction_type = I_U },
 
     { .mask = 0 }
 };
