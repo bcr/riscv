@@ -36,3 +36,6 @@
 0000100f fence.i
 00000073 ecall
 00100073 ebreak
+c00010f3 csrrw	ra,cycle,zero
+c82f2ff3 csrrs	t6,instreth,t5
+c80e3ef3 csrrc	t4,cycleh,t3

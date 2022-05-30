@@ -19,6 +19,7 @@ enum instruction_type
     I_B,
     I_FENCE,
     I_OPCODE_ONLY,
+    I_CSR,
 };
 
 struct instruction_entry
@@ -27,6 +28,26 @@ struct instruction_entry
     uint32_t match;
     const char* opcode;
     enum instruction_type instruction_type;
+};
+
+struct csr_entry
+{
+    uint16_t number;
+    const char* name;
+};
+
+// From Table 19.3 in RISC-V User-Level ISA V2.2
+static const struct csr_entry csr_entries[] = {
+    { .number = 0x0001, .name = "fflags" },
+    { .number = 0x0002, .name = "frm" },
+    { .number = 0x0003, .name = "fcsr" },
+    { .number = 0x0C00, .name = "cycle" },
+    { .number = 0x0C02, .name = "instret" },
+    { .number = 0x0C80, .name = "cycleh" },
+    { .number = 0x0C81, .name = "timeh" },
+    { .number = 0x0C82, .name = "instreth" },
+
+    { .number = 0, .name = "????" }
 };
 
 #define OPCODE_MASK 0x7f
@@ -72,6 +93,9 @@ static const struct instruction_entry instructions[] = {
     { .mask = EXACT_MASK, .match = 0x100F, .opcode = "fence.i", .instruction_type = I_OPCODE_ONLY },
     { .mask = EXACT_MASK, .match = 0x73, .opcode = "ecall", .instruction_type = I_OPCODE_ONLY },
     { .mask = EXACT_MASK, .match = 0x100073, .opcode = "ebreak", .instruction_type = I_OPCODE_ONLY },
+    { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x1073, .opcode = "csrrw", .instruction_type = I_CSR },
+    { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x2073, .opcode = "csrrs", .instruction_type = I_CSR },
+    { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x3073, .opcode = "csrrc", .instruction_type = I_CSR },
 
     { .mask = 0 }
 };
@@ -99,11 +123,27 @@ static const char* (fence_flags[16]) = {
 #define extract_shamt() shamt = (instruction >> 20) & 0x1F
 #define extract_pred() pred = (instruction >> 24) & 0x0F
 #define extract_succ() succ = (instruction >> 20) & 0x0F
+#define extract_csr() csr = (instruction >> 20) & 0x0FFF
 #define extract_U_imm() imm = (instruction & 0xFFFFF000) >> 12
 #define extract_J_imm() imm = (instruction & 0x000FF000) | ((instruction & 0x00100000) >> 9) | ((instruction & 0x7FE00000) >> 20) | ((instruction & 0x80000000) >> 11)
 #define extract_I_imm() imm = (instruction & 0xFFF00000) >> 20
 #define extract_B_imm() imm = (instruction & 0x0F00) >> 7 | ((instruction & 0x7E000000) >> 20) | ((instruction & 0x080) << 4) | ((instruction & 0x80000000) >> 19) | ((instruction & 0x80000000) ? 0xFFFFF000 : 0)
 #define extract_S_imm() imm = ((instruction & 0x0F80) >> 7) | ((instruction & 0xFE000000) >> 20)
+
+static const char* csr_to_name(uint16_t csr)
+{
+    const char* final_string = "????";
+
+    for (const struct csr_entry* mover = csr_entries; mover->number; ++mover)
+    {
+        if (mover->number == csr)
+        {
+            final_string = mover->name;
+        }
+    }
+
+    return final_string;
+}
 
 size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_length)
 {
@@ -123,6 +163,7 @@ size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_
                 uint8_t shamt;
                 uint8_t pred;
                 uint8_t succ;
+                uint16_t csr;
                 int32_t imm;
                 case I_U:
                     extract_rd();
@@ -199,6 +240,14 @@ size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_
 
                 case I_OPCODE_ONLY:
                     snprintf(output, output_length, "%s", mover->opcode);
+                    break;
+
+                case I_CSR:
+                    extract_rd();
+                    extract_rs1();
+                    extract_csr();
+                    const char* csr_name = csr_to_name(csr);
+                    snprintf(output, output_length, "%s\t%s,%s,%s", mover->opcode, abi_register_names[rd], csr_name, abi_register_names[rs1]);
                     break;
 
                 default:

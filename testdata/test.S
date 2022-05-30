@@ -40,3 +40,7 @@ start:
     fence.i
     ecall
     ebreak
+    # CSR functions have a bunch of special names
+    csrrw x1,cycle,x0
+    csrrs x31,instreth,x30
+    csrrc x29,cycleh,x28
