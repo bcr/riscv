@@ -29,6 +29,7 @@ struct instruction_entry
 static const struct instruction_entry instructions[] = {
     { .mask = OPCODE_MASK, .match = 0x37, .opcode = "lui", .instruction_type = I_U },
     { .mask = OPCODE_MASK, .match = 0x17, .opcode = "auipc", .instruction_type = I_U },
+    { .mask = OPCODE_MASK, .match = 0x6f, .opcode = "jal", .instruction_type = I_J },
 
     { .mask = 0 }
 };
@@ -48,6 +49,7 @@ static const char* (abi_register_names[32]) = {
 #define extract_rs1() rs1 = (instruction >> 15) & 0x1F
 #define extract_rs2() rs2 = (instruction >> 20) & 0x1F
 #define extract_U_imm() imm = (instruction & 0xFFFFF000) >> 12
+#define extract_J_imm() imm = (instruction & 0x000FF000) | ((instruction & 0x00100000) >> 9) | ((instruction & 0x7FE00000) >> 20) | ((instruction & 0x80000000) >> 11)
 
 size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_length)
 {
@@ -66,6 +68,12 @@ size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_
                 case I_U:
                     extract_rd();
                     extract_U_imm();
+                    snprintf(output, output_length, "%s\t%s,%#x", mover->opcode, abi_register_names[rd], imm);
+                    break;
+
+                case I_J:
+                    extract_rd();
+                    extract_J_imm();
                     snprintf(output, output_length, "%s\t%s,%#x", mover->opcode, abi_register_names[rd], imm);
                     break;
 
