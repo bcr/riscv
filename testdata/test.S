@@ -12,3 +12,9 @@ start:
     sb x23,9(x22)
     sh x21,41(x20)
     sw x19,133(x18)
+    addi x17,x16,57
+    slti x15,x14,114
+    sltiu x13,x12,228
+    xori x11,x10,456
+    ori x9,x8,912
+    andi x7,x6,1824
