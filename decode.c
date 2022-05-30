@@ -107,8 +107,6 @@ static const struct instruction_entry instructions[] = {
     { .mask = 0 }
 };
 
-// 3c025537                lui     a0,0x3c025
-
 static const char* (abi_register_names[32]) = {
     "zero", "ra", "sp",  "gp",  "tp", "t0", "t1", "t2", // x0  - x7
     "s0",   "s1", "a0",  "a1",  "a2", "a3", "a4", "a5", // x8  - x15
@@ -121,8 +119,6 @@ static const char* (fence_flags[16]) = {
     "", "w", "r", "rw", "o", "ow", "or", "orw",
     "i", "iw", "ir", "irw", "io", "iow", "ior", "iorw"
 };
-
-// 01010 0110111
 
 #define extract_rd() rd = (instruction >> 7) & 0x1F
 #define extract_rs1() rs1 = (instruction >> 15) & 0x1F
@@ -174,6 +170,7 @@ size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_
                 uint16_t csr;
                 int32_t imm;
                 const char* csr_name;
+
                 case I_U:
                     extract_rd();
                     extract_U_imm();
