@@ -59,6 +59,7 @@ static const struct csr_entry csr_entries[] = {
 
 static const struct instruction_entry instructions[] = {
     { .mask = EXACT_MASK, .match = 0x13, .opcode = "nop", .instruction_type = I_OPCODE_ONLY },
+    { .mask = EXACT_MASK, .match = 0x8067, .opcode = "ret", .instruction_type = I_OPCODE_ONLY },
 
     { .mask = OPCODE_MASK, .match = 0x37, .opcode = "lui", .instruction_type = I_U },
     { .mask = OPCODE_MASK, .match = 0x17, .opcode = "auipc", .instruction_type = I_U },

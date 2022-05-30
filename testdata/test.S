@@ -50,3 +50,4 @@ start:
 
     # pseudo instructions
     nop
+    ret

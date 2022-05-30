@@ -43,3 +43,4 @@ c02fddf3 csrrwi	s11,instret,31
 c81f6d73 csrrsi	s10,timeh,30
 003efcf3 csrrci	s9,fcsr,29
 00000013 nop
+00008067 ret
