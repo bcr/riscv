@@ -38,3 +38,5 @@ start:
     fence iw,or
     fence
     fence.i
+    ecall
+    ebreak

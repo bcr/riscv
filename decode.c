@@ -70,6 +70,8 @@ static const struct instruction_entry instructions[] = {
     { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x7033, .opcode = "and", .instruction_type = I_R },
     { .mask = FENCE_MASK, .match = 0x0F, .opcode = "fence", .instruction_type = I_FENCE },
     { .mask = EXACT_MASK, .match = 0x100F, .opcode = "fence.i", .instruction_type = I_OPCODE_ONLY },
+    { .mask = EXACT_MASK, .match = 0x73, .opcode = "ecall", .instruction_type = I_OPCODE_ONLY },
+    { .mask = EXACT_MASK, .match = 0x100073, .opcode = "ebreak", .instruction_type = I_OPCODE_ONLY },
 
     { .mask = 0 }
 };

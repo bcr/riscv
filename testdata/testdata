@@ -34,3 +34,5 @@
 0960000f fence	iw,or
 0ff0000f fence
 0000100f fence.i
+00000073 ecall
+00100073 ebreak
