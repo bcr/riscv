@@ -9,3 +9,6 @@ start:
     lw x29,20(x28)
     lbu x27,30(x26)
     lhu x25,40(x24)
+    sb x23,9(x22)
+    sh x21,41(x20)
+    sw x19,133(x18)
