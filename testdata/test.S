@@ -31,3 +31,9 @@ start:
     sra x10,x9,x8
     or x7,x6,x5
     and x4,x3,x2
+    # Fence instructions are i,o,r,w for pred and succ, probably need to test
+    fence i,r
+    fence io,rw
+    fence iorw,i
+    fence iw,or
+    fence

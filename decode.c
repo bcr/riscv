@@ -16,7 +16,8 @@ enum instruction_type
     I_I_3,
     I_I_4,
     I_S,
-    I_B
+    I_B,
+    I_FENCE,
 };
 
 struct instruction_entry
@@ -30,6 +31,7 @@ struct instruction_entry
 #define OPCODE_MASK 0x7f
 #define FUNCT3_MASK 0x7000
 #define FUNCT7_MASK 0xFE000000
+#define FENCE_MASK  0xF00FFFFF
 
 static const struct instruction_entry instructions[] = {
     { .mask = OPCODE_MASK, .match = 0x37, .opcode = "lui", .instruction_type = I_U },
@@ -64,6 +66,7 @@ static const struct instruction_entry instructions[] = {
     { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x40005033, .opcode = "sra", .instruction_type = I_R },
     { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x6033, .opcode = "or", .instruction_type = I_R },
     { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x7033, .opcode = "and", .instruction_type = I_R },
+    { .mask = FENCE_MASK, .match = 0x0F, .opcode = "fence", .instruction_type = I_FENCE },
 
     { .mask = 0 }
 };
@@ -77,12 +80,20 @@ static const char* (abi_register_names[32]) = {
     "s8",   "s9", "s10", "s11", "t3", "t4", "t5", "t6"  // x24 - x31
 };
 
+// i = 8, o = 4, r = 2, w = 1
+static const char* (fence_flags[16]) = {
+    "", "w", "r", "rw", "o", "ow", "or", "orw",
+    "i", "iw", "ir", "irw", "io", "iow", "ior", "iorw"
+};
+
 // 01010 0110111
 
 #define extract_rd() rd = (instruction >> 7) & 0x1F
 #define extract_rs1() rs1 = (instruction >> 15) & 0x1F
 #define extract_rs2() rs2 = (instruction >> 20) & 0x1F
 #define extract_shamt() shamt = (instruction >> 20) & 0x1F
+#define extract_pred() pred = (instruction >> 24) & 0x0F
+#define extract_succ() succ = (instruction >> 20) & 0x0F
 #define extract_U_imm() imm = (instruction & 0xFFFFF000) >> 12
 #define extract_J_imm() imm = (instruction & 0x000FF000) | ((instruction & 0x00100000) >> 9) | ((instruction & 0x7FE00000) >> 20) | ((instruction & 0x80000000) >> 11)
 #define extract_I_imm() imm = (instruction & 0xFFF00000) >> 20
@@ -105,6 +116,8 @@ size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_
                 uint8_t rs1;
                 uint8_t rs2;
                 uint8_t shamt;
+                uint8_t pred;
+                uint8_t succ;
                 int32_t imm;
                 case I_U:
                     extract_rd();
@@ -164,6 +177,19 @@ size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_
                     extract_rs1();
                     extract_rs2();
                     snprintf(output, output_length, "%s\t%s,%s,%s", mover->opcode, abi_register_names[rd], abi_register_names[rs1], abi_register_names[rs2]);
+                    break;
+
+                case I_FENCE:
+                    extract_pred();
+                    extract_succ();
+                    if ((pred == 0x0f) && (succ == 0x0f))
+                    {
+                        snprintf(output, output_length, "%s", mover->opcode);
+                    }
+                    else
+                    {
+                        snprintf(output, output_length, "%s\t%s,%s", mover->opcode, fence_flags[pred], fence_flags[succ]);
+                    }
                     break;
 
                 default:

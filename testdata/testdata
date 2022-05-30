@@ -28,3 +28,8 @@
 4084d533 sra	a0,s1,s0
 005363b3 or	t2,t1,t0
 0021f233 and	tp,gp,sp
+0820000f fence	i,r
+0c30000f fence	io,rw
+0f80000f fence	iorw,i
+0960000f fence	iw,or
+0ff0000f fence
