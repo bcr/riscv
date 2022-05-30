@@ -18,3 +18,13 @@
 01e29213 slli	tp,t0,0x1e
 00115193 srli	gp,sp,0x1
 41f05093 srai	ra,zero,0x1f
+01df0fb3 add	t6,t5,t4
+41ad8e33 sub	t3,s11,s10
+017c1cb3 sll	s9,s8,s7
+014aab33 slt	s6,s5,s4
+011939b3 sltu	s3,s2,a7
+00e7c833 xor	a6,a5,a4
+00b656b3 srl	a3,a2,a1
+4084d533 sra	a0,s1,s0
+005363b3 or	t2,t1,t0
+0021f233 and	tp,gp,sp

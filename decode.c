@@ -54,6 +54,16 @@ static const struct instruction_entry instructions[] = {
     { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x1013, .opcode = "slli", .instruction_type = I_I_4 },
     { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x5013, .opcode = "srli", .instruction_type = I_I_4 },
     { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x40005013, .opcode = "srai", .instruction_type = I_I_4 },
+    { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x33, .opcode = "add", .instruction_type = I_R },
+    { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x40000033, .opcode = "sub", .instruction_type = I_R },
+    { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x1033, .opcode = "sll", .instruction_type = I_R },
+    { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x2033, .opcode = "slt", .instruction_type = I_R },
+    { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x3033, .opcode = "sltu", .instruction_type = I_R },
+    { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x4033, .opcode = "xor", .instruction_type = I_R },
+    { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x5033, .opcode = "srl", .instruction_type = I_R },
+    { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x40005033, .opcode = "sra", .instruction_type = I_R },
+    { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x6033, .opcode = "or", .instruction_type = I_R },
+    { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x7033, .opcode = "and", .instruction_type = I_R },
 
     { .mask = 0 }
 };
@@ -147,6 +157,13 @@ size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_
                     extract_rs2();
                     extract_S_imm();
                     snprintf(output, output_length, "%s\t%s,%d(%s)", mover->opcode, abi_register_names[rs2], imm, abi_register_names[rs1]);
+                    break;
+
+                case I_R:
+                    extract_rd();
+                    extract_rs1();
+                    extract_rs2();
+                    snprintf(output, output_length, "%s\t%s,%s,%s", mover->opcode, abi_register_names[rd], abi_register_names[rs1], abi_register_names[rs2]);
                     break;
 
                 default:
