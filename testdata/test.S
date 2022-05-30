@@ -37,3 +37,4 @@ start:
     fence iorw,i
     fence iw,or
     fence
+    fence.i

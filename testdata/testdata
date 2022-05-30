@@ -33,3 +33,4 @@
 0f80000f fence	iorw,i
 0960000f fence	iw,or
 0ff0000f fence
+0000100f fence.i

@@ -18,6 +18,7 @@ enum instruction_type
     I_S,
     I_B,
     I_FENCE,
+    I_OPCODE_ONLY,
 };
 
 struct instruction_entry
@@ -32,6 +33,7 @@ struct instruction_entry
 #define FUNCT3_MASK 0x7000
 #define FUNCT7_MASK 0xFE000000
 #define FENCE_MASK  0xF00FFFFF
+#define EXACT_MASK  0xFFFFFFFF
 
 static const struct instruction_entry instructions[] = {
     { .mask = OPCODE_MASK, .match = 0x37, .opcode = "lui", .instruction_type = I_U },
@@ -67,6 +69,7 @@ static const struct instruction_entry instructions[] = {
     { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x6033, .opcode = "or", .instruction_type = I_R },
     { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x7033, .opcode = "and", .instruction_type = I_R },
     { .mask = FENCE_MASK, .match = 0x0F, .opcode = "fence", .instruction_type = I_FENCE },
+    { .mask = EXACT_MASK, .match = 0x100F, .opcode = "fence.i", .instruction_type = I_OPCODE_ONLY },
 
     { .mask = 0 }
 };
@@ -190,6 +193,10 @@ size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_
                     {
                         snprintf(output, output_length, "%s\t%s,%s", mover->opcode, fence_flags[pred], fence_flags[succ]);
                     }
+                    break;
+
+                case I_OPCODE_ONLY:
+                    snprintf(output, output_length, "%s", mover->opcode);
                     break;
 
                 default:
