@@ -39,3 +39,6 @@
 c00010f3 csrrw	ra,cycle,zero
 c82f2ff3 csrrs	t6,instreth,t5
 c80e3ef3 csrrc	t4,cycleh,t3
+c02fddf3 csrrwi	s11,instret,31
+c81f6d73 csrrsi	s10,timeh,30
+003efcf3 csrrci	s9,fcsr,29

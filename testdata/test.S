@@ -44,3 +44,6 @@ start:
     csrrw x1,cycle,x0
     csrrs x31,instreth,x30
     csrrc x29,cycleh,x28
+    csrrwi x27,instret,31
+    csrrsi x26,timeh,30
+    csrrci x25,fcsr,29

@@ -20,6 +20,7 @@ enum instruction_type
     I_FENCE,
     I_OPCODE_ONLY,
     I_CSR,
+    I_CSR_IMM,
 };
 
 struct instruction_entry
@@ -96,6 +97,9 @@ static const struct instruction_entry instructions[] = {
     { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x1073, .opcode = "csrrw", .instruction_type = I_CSR },
     { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x2073, .opcode = "csrrs", .instruction_type = I_CSR },
     { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x3073, .opcode = "csrrc", .instruction_type = I_CSR },
+    { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x5073, .opcode = "csrrwi", .instruction_type = I_CSR_IMM },
+    { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x6073, .opcode = "csrrsi", .instruction_type = I_CSR_IMM },
+    { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x7073, .opcode = "csrrci", .instruction_type = I_CSR_IMM },
 
     { .mask = 0 }
 };
@@ -129,6 +133,7 @@ static const char* (fence_flags[16]) = {
 #define extract_I_imm() imm = (instruction & 0xFFF00000) >> 20
 #define extract_B_imm() imm = (instruction & 0x0F00) >> 7 | ((instruction & 0x7E000000) >> 20) | ((instruction & 0x080) << 4) | ((instruction & 0x80000000) >> 19) | ((instruction & 0x80000000) ? 0xFFFFF000 : 0)
 #define extract_S_imm() imm = ((instruction & 0x0F80) >> 7) | ((instruction & 0xFE000000) >> 20)
+#define extract_CSR_imm() imm = (instruction >> 15) & 0x1F
 
 static const char* csr_to_name(uint16_t csr)
 {
@@ -165,6 +170,7 @@ size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_
                 uint8_t succ;
                 uint16_t csr;
                 int32_t imm;
+                const char* csr_name;
                 case I_U:
                     extract_rd();
                     extract_U_imm();
@@ -246,8 +252,16 @@ size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_
                     extract_rd();
                     extract_rs1();
                     extract_csr();
-                    const char* csr_name = csr_to_name(csr);
+                    csr_name = csr_to_name(csr);
                     snprintf(output, output_length, "%s\t%s,%s,%s", mover->opcode, abi_register_names[rd], csr_name, abi_register_names[rs1]);
+                    break;
+
+                case I_CSR_IMM:
+                    extract_rd();
+                    extract_CSR_imm();
+                    extract_csr();
+                    csr_name = csr_to_name(csr);
+                    snprintf(output, output_length, "%s\t%s,%s,%d", mover->opcode, abi_register_names[rd], csr_name, imm);
                     break;
 
                 default:
