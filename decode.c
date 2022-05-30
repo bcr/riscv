@@ -66,7 +66,7 @@ size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_
                 case I_U:
                     extract_rd();
                     extract_U_imm();
-                    snprintf(output, output_length, "%s %s,%#x", mover->opcode, abi_register_names[rd], imm);
+                    snprintf(output, output_length, "%s\t%s,%#x", mover->opcode, abi_register_names[rd], imm);
                     break;
 
                 default:
