@@ -47,3 +47,6 @@ start:
     csrrwi x27,instret,31
     csrrsi x26,timeh,30
     csrrci x25,fcsr,29
+
+    # pseudo instructions
+    nop
