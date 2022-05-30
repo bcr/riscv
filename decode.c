@@ -32,6 +32,7 @@ static const struct instruction_entry instructions[] = {
     { .mask = OPCODE_MASK, .match = 0x17, .opcode = "auipc", .instruction_type = I_U },
     { .mask = OPCODE_MASK, .match = 0x6f, .opcode = "jal", .instruction_type = I_J },
     { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x67, .opcode = "jalr", .instruction_type = I_I },
+    { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x63, .opcode = "beq", .instruction_type = I_B },
 
     { .mask = 0 }
 };
@@ -53,6 +54,7 @@ static const char* (abi_register_names[32]) = {
 #define extract_U_imm() imm = (instruction & 0xFFFFF000) >> 12
 #define extract_J_imm() imm = (instruction & 0x000FF000) | ((instruction & 0x00100000) >> 9) | ((instruction & 0x7FE00000) >> 20) | ((instruction & 0x80000000) >> 11)
 #define extract_I_imm() imm = (instruction & 0xFFF00000) >> 20
+#define extract_B_imm() imm = (instruction & 0x0F00) >> 7 | ((instruction & 0x7E000000) >> 20) | ((instruction & 0x080) << 4) | ((instruction & 0x80000000) >> 19) | ((instruction & 0x80000000) ? 0xFFFFF000 : 0)
 
 size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_length)
 {
@@ -68,7 +70,8 @@ size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_
             {
                 uint8_t rd;
                 uint8_t rs1;
-                uint32_t imm;
+                uint8_t rs2;
+                int32_t imm;
                 case I_U:
                     extract_rd();
                     extract_U_imm();
@@ -85,6 +88,13 @@ size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_
                     extract_rs1();
                     extract_I_imm();
                     snprintf(output, output_length, "%s\t%d(%s)", mover->opcode, imm, abi_register_names[rs1]);
+                    break;
+
+                case I_B:
+                    extract_rs1();
+                    extract_rs2();
+                    extract_B_imm();
+                    snprintf(output, output_length, "%s\t%s,%s,%d", mover->opcode, abi_register_names[rs1], abi_register_names[rs2], imm);
                     break;
 
                 default:
