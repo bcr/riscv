@@ -1,0 +1,2 @@
+#!/bin/sh
+cat testdata | cut -f 1 | ../decode_main > actual && diff testdata actual
