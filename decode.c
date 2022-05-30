@@ -14,6 +14,7 @@ enum instruction_type
     I_I,
     I_I_2,
     I_I_3,
+    I_I_4,
     I_S,
     I_B
 };
@@ -28,6 +29,7 @@ struct instruction_entry
 
 #define OPCODE_MASK 0x7f
 #define FUNCT3_MASK 0x7000
+#define FUNCT7_MASK 0xFE000000
 
 static const struct instruction_entry instructions[] = {
     { .mask = OPCODE_MASK, .match = 0x37, .opcode = "lui", .instruction_type = I_U },
@@ -49,6 +51,9 @@ static const struct instruction_entry instructions[] = {
     { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x4013, .opcode = "xori", .instruction_type = I_I_3 },
     { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x6013, .opcode = "ori", .instruction_type = I_I_3 },
     { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x7013, .opcode = "andi", .instruction_type = I_I_3 },
+    { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x1013, .opcode = "slli", .instruction_type = I_I_4 },
+    { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x5013, .opcode = "srli", .instruction_type = I_I_4 },
+    { .mask = OPCODE_MASK | FUNCT3_MASK | FUNCT7_MASK, .match = 0x40005013, .opcode = "srai", .instruction_type = I_I_4 },
 
     { .mask = 0 }
 };
@@ -67,6 +72,7 @@ static const char* (abi_register_names[32]) = {
 #define extract_rd() rd = (instruction >> 7) & 0x1F
 #define extract_rs1() rs1 = (instruction >> 15) & 0x1F
 #define extract_rs2() rs2 = (instruction >> 20) & 0x1F
+#define extract_shamt() shamt = (instruction >> 20) & 0x1F
 #define extract_U_imm() imm = (instruction & 0xFFFFF000) >> 12
 #define extract_J_imm() imm = (instruction & 0x000FF000) | ((instruction & 0x00100000) >> 9) | ((instruction & 0x7FE00000) >> 20) | ((instruction & 0x80000000) >> 11)
 #define extract_I_imm() imm = (instruction & 0xFFF00000) >> 20
@@ -88,6 +94,7 @@ size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_
                 uint8_t rd;
                 uint8_t rs1;
                 uint8_t rs2;
+                uint8_t shamt;
                 int32_t imm;
                 case I_U:
                     extract_rd();
@@ -119,6 +126,13 @@ size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_
                     extract_rs1();
                     extract_I_imm();
                     snprintf(output, output_length, "%s\t%s,%s,%d", mover->opcode, abi_register_names[rd], abi_register_names[rs1], imm);
+                    break;
+
+                case I_I_4:
+                    extract_rd();
+                    extract_rs1();
+                    extract_shamt();
+                    snprintf(output, output_length, "%s\t%s,%s,%#x", mover->opcode, abi_register_names[rd], abi_register_names[rs1], shamt);
                     break;
 
                 case I_B:

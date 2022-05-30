@@ -18,3 +18,6 @@ start:
     xori x11,x10,456
     ori x9,x8,912
     andi x7,x6,1824
+    slli x4,x5,30
+    srli x3,x2,1
+    srai x1,x0,31

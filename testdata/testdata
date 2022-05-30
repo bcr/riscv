@@ -15,3 +15,6 @@
 1c854593 xori	a1,a0,456
 39046493 ori	s1,s0,912
 72037393 andi	t2,t1,1824
+01e29213 slli	tp,t0,0x1e
+00115193 srli	gp,sp,0x1
+41f05093 srai	ra,zero,0x1f
