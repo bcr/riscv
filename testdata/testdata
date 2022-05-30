@@ -1,3 +1,8 @@
 03039017 auipc	zero,0x3039
 12345537 lui	a0,0x12345
 123100e7 jalr	291(sp)
+01110083 lb	ra,17(sp)
+011f1f83 lh	t6,17(t5)
+014e2e83 lw	t4,20(t3)
+01ed4d83 lbu	s11,30(s10)
+028c5c83 lhu	s9,40(s8)

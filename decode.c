@@ -12,6 +12,7 @@ enum instruction_type
     I_J,
     I_R,
     I_I,
+    I_I_2,
     I_S,
     I_B
 };
@@ -25,7 +26,7 @@ struct instruction_entry
 };
 
 #define OPCODE_MASK 0x7f
-#define FUNCT3_MASK 0x3000
+#define FUNCT3_MASK 0x7000
 
 static const struct instruction_entry instructions[] = {
     { .mask = OPCODE_MASK, .match = 0x37, .opcode = "lui", .instruction_type = I_U },
@@ -33,6 +34,11 @@ static const struct instruction_entry instructions[] = {
     { .mask = OPCODE_MASK, .match = 0x6f, .opcode = "jal", .instruction_type = I_J },
     { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x67, .opcode = "jalr", .instruction_type = I_I },
     { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x63, .opcode = "beq", .instruction_type = I_B },
+    { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x3, .opcode = "lb", .instruction_type = I_I_2 },
+    { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x1003, .opcode = "lh", .instruction_type = I_I_2 },
+    { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x2003, .opcode = "lw", .instruction_type = I_I_2 },
+    { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x4003, .opcode = "lbu", .instruction_type = I_I_2 },
+    { .mask = OPCODE_MASK | FUNCT3_MASK, .match = 0x5003, .opcode = "lhu", .instruction_type = I_I_2 },
 
     { .mask = 0 }
 };
@@ -88,6 +94,13 @@ size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_
                     extract_rs1();
                     extract_I_imm();
                     snprintf(output, output_length, "%s\t%d(%s)", mover->opcode, imm, abi_register_names[rs1]);
+                    break;
+
+                case I_I_2:
+                    extract_rd();
+                    extract_rs1();
+                    extract_I_imm();
+                    snprintf(output, output_length, "%s\t%s,%d(%s)", mover->opcode, abi_register_names[rd], imm, abi_register_names[rs1]);
                     break;
 
                 case I_B:
