@@ -53,12 +53,17 @@ zimm
 first = True
 
 max_destination = 0
+final_dict = {}
+current_dict = {}
+
 for line in input.splitlines():
     if not line:
         continue
     if not line[0].isdigit():
-        print(f' /* {max_destination + 1} bits */')
-        print(f'{line} = ', end='')
+        current_dict["leftmost_bit_position"] = max_destination + 1
+        current_dict = {}
+        final_dict[line] = current_dict
+        current_dict["spans"] = []
         first = True
         continue
     values = line.split()
@@ -67,8 +72,6 @@ for line in input.splitlines():
         if first:
             max_destination = 0
             first = False
-        else:
-            print(' | ', end='')
 
         if destination.find('-') != -1:
             (high,low) = destination.split('-')
@@ -79,6 +82,20 @@ for line in input.splitlines():
         high = int(high)
         max_destination = max(max_destination, high)
         low = int(low)
+
+        current_dict["spans"].append((source, high, low))
+        source -= (high - low + 1)
+
+current_dict["leftmost_bit_position"] = max_destination + 1
+
+for entry in final_dict:
+    print(f"{entry} = ", end='')
+    first = True
+    for (source, high, low) in final_dict[entry]["spans"]:
+        if first:
+            first = False
+        else:
+            print(' | ', end='')
 
         if source > high:
             print(f'((input >> {source - high})', end='')
@@ -91,6 +108,5 @@ for line in input.splitlines():
         mask = hex(mask)
         mask = mask.replace('0x', '0x0')
         print(f' & {mask})', end='')
-        source -= (high - low + 1)
 
-print(f' /* {max_destination + 1} bits */')
+    print(f" /* {final_dict[entry]['leftmost_bit_position']} */")
