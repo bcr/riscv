@@ -24,9 +24,11 @@ struct instruction_entry
 #define EXACT_MASK  0xFFFFFFFF
 
 static const struct instruction_entry instructions[] = {
+    /* Psudoinstructions */
     { .mask = EXACT_MASK, .match = 0x13, .opcode = "nop", .handler = decode_opcode_only },
     { .mask = EXACT_MASK, .match = 0x8067, .opcode = "ret", .handler = decode_opcode_only },
 
+    /* RV32I */
     { .mask = OPCODE_MASK, .match = 0x37, .opcode = "lui", .handler = decode_u },
     { .mask = OPCODE_MASK, .match = 0x17, .opcode = "auipc", .handler = decode_u },
     { .mask = OPCODE_MASK, .match = 0x6f, .opcode = "jal", .handler = decode_j },
