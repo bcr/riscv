@@ -67,6 +67,18 @@ static const char* csr_to_name(uint16_t csr)
     return final_string;
 }
 
+static int32_t sign_extend(int32_t number, unsigned int bit)
+{
+    int32_t return_number = number;
+
+    if (number & (1 << bit))
+    {
+        return_number |= 0xFFFFFFFF << bit;
+    }
+
+    return return_number;
+}
+
 bool decode_u(uint32_t instruction, const char* opcode, char* output, size_t output_length)
 {
     extract_rd();
