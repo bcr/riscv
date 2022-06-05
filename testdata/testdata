@@ -3,46 +3,51 @@
    8:	000000ef          	jal	ra,8 
    c:	123100e7          	jalr	291(sp)
   10:	feb508e3          	beq	a0,a1,0 
-  14:	01110083          	lb	ra,17(sp)
-  18:	011f1f83          	lh	t6,17(t5)
-  1c:	014e2e83          	lw	t4,20(t3)
-  20:	01ed4d83          	lbu	s11,30(s10)
-  24:	028c5c83          	lhu	s9,40(s8)
-  28:	017b04a3          	sb	s7,9(s6)
-  2c:	035a14a3          	sh	s5,41(s4)
-  30:	093922a3          	sw	s3,133(s2)
-  34:	03980893          	addi	a7,a6,57
-  38:	07272793          	slti	a5,a4,114
-  3c:	0e463693          	sltiu	a3,a2,228
-  40:	1c854593          	xori	a1,a0,456
-  44:	39046493          	ori	s1,s0,912
-  48:	72037393          	andi	t2,t1,1824
-  4c:	01e29213          	slli	tp,t0,0x1e
-  50:	00115193          	srli	gp,sp,0x1
-  54:	41f05093          	srai	ra,zero,0x1f
-  58:	01df0fb3          	add	t6,t5,t4
-  5c:	41ad8e33          	sub	t3,s11,s10
-  60:	017c1cb3          	sll	s9,s8,s7
-  64:	014aab33          	slt	s6,s5,s4
-  68:	011939b3          	sltu	s3,s2,a7
-  6c:	00e7c833          	xor	a6,a5,a4
-  70:	00b656b3          	srl	a3,a2,a1
-  74:	4084d533          	sra	a0,s1,s0
-  78:	005363b3          	or	t2,t1,t0
-  7c:	0021f233          	and	tp,gp,sp
-  80:	0820000f          	fence	i,r
-  84:	0c30000f          	fence	io,rw
-  88:	0f80000f          	fence	iorw,i
-  8c:	0960000f          	fence	iw,or
-  90:	0ff0000f          	fence
-  94:	0000100f          	fence.i
-  98:	00000073          	ecall
-  9c:	00100073          	ebreak
-  a0:	c00010f3          	csrrw	ra,cycle,zero
-  a4:	c82f2ff3          	csrrs	t6,instreth,t5
-  a8:	c80e3ef3          	csrrc	t4,cycleh,t3
-  ac:	c02fddf3          	csrrwi	s11,instret,31
-  b0:	c81f6d73          	csrrsi	s10,timeh,30
-  b4:	003efcf3          	csrrci	s9,fcsr,29
-  b8:	00000013          	nop
-  bc:	00008067          	ret
+  14:	fef716e3          	bne	a4,a5,0 
+  18:	ff1844e3          	blt	a6,a7,0 
+  1c:	fe62d2e3          	bge	t0,t1,0 
+  20:	ffc3e0e3          	bltu	t2,t3,0 
+  24:	fdeefee3          	bgeu	t4,t5,0 
+  28:	01110083          	lb	ra,17(sp)
+  2c:	011f1f83          	lh	t6,17(t5)
+  30:	014e2e83          	lw	t4,20(t3)
+  34:	01ed4d83          	lbu	s11,30(s10)
+  38:	028c5c83          	lhu	s9,40(s8)
+  3c:	017b04a3          	sb	s7,9(s6)
+  40:	035a14a3          	sh	s5,41(s4)
+  44:	093922a3          	sw	s3,133(s2)
+  48:	03980893          	addi	a7,a6,57
+  4c:	07272793          	slti	a5,a4,114
+  50:	0e463693          	sltiu	a3,a2,228
+  54:	1c854593          	xori	a1,a0,456
+  58:	39046493          	ori	s1,s0,912
+  5c:	72037393          	andi	t2,t1,1824
+  60:	01e29213          	slli	tp,t0,0x1e
+  64:	00115193          	srli	gp,sp,0x1
+  68:	41f05093          	srai	ra,zero,0x1f
+  6c:	01df0fb3          	add	t6,t5,t4
+  70:	41ad8e33          	sub	t3,s11,s10
+  74:	017c1cb3          	sll	s9,s8,s7
+  78:	014aab33          	slt	s6,s5,s4
+  7c:	011939b3          	sltu	s3,s2,a7
+  80:	00e7c833          	xor	a6,a5,a4
+  84:	00b656b3          	srl	a3,a2,a1
+  88:	4084d533          	sra	a0,s1,s0
+  8c:	005363b3          	or	t2,t1,t0
+  90:	0021f233          	and	tp,gp,sp
+  94:	0820000f          	fence	i,r
+  98:	0c30000f          	fence	io,rw
+  9c:	0f80000f          	fence	iorw,i
+  a0:	0960000f          	fence	iw,or
+  a4:	0ff0000f          	fence
+  a8:	0000100f          	fence.i
+  ac:	00000073          	ecall
+  b0:	00100073          	ebreak
+  b4:	c00010f3          	csrrw	ra,cycle,zero
+  b8:	c82f2ff3          	csrrs	t6,instreth,t5
+  bc:	c80e3ef3          	csrrc	t4,cycleh,t3
+  c0:	c02fddf3          	csrrwi	s11,instret,31
+  c4:	c81f6d73          	csrrsi	s10,timeh,30
+  c8:	003efcf3          	csrrci	s9,fcsr,29
+  cc:	00000013          	nop
+  d0:	00008067          	ret

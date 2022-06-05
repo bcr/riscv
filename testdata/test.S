@@ -4,6 +4,11 @@ start:
     jal ra, 1
     jalr x2,0x123
     beq a0,a1,start
+    bne a4,a5,start
+    blt a6,a7,start
+    bge t0,t1,start
+    bltu t2,t3,start
+    bgeu t4,t5,start
     lb x1,17(x2)
     lh x31,17(x30)
     lw x29,20(x28)
