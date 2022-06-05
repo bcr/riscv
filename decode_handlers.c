@@ -79,7 +79,7 @@ static int32_t sign_extend(int32_t number, unsigned int bit)
     return return_number;
 }
 
-bool decode_u(uint32_t instruction, const char* opcode, char* output, size_t output_length)
+bool decode_u(uint32_t pc, uint32_t instruction, const char* opcode, char* output, size_t output_length)
 {
     extract_rd();
     extract_U_imm();
@@ -89,17 +89,17 @@ bool decode_u(uint32_t instruction, const char* opcode, char* output, size_t out
     return true;
 }
 
-bool decode_j(uint32_t instruction, const char* opcode, char* output, size_t output_length)
+bool decode_j(uint32_t pc, uint32_t instruction, const char* opcode, char* output, size_t output_length)
 {
     extract_rd();
     extract_J_imm();
 
-    snprintf(output, output_length, "%s\t%s,%#x", opcode, abi_register_names[rd], imm);
+    snprintf(output, output_length, "%s\t%s,%d", opcode, abi_register_names[rd], pc + imm);
 
     return true;
 }
 
-bool decode_i(uint32_t instruction, const char* opcode, char* output, size_t output_length)
+bool decode_i(uint32_t pc, uint32_t instruction, const char* opcode, char* output, size_t output_length)
 {
     extract_rs1();
     extract_decode_imm();
@@ -109,7 +109,7 @@ bool decode_i(uint32_t instruction, const char* opcode, char* output, size_t out
     return true;
 }
 
-bool decode_i_2(uint32_t instruction, const char* opcode, char* output, size_t output_length)
+bool decode_i_2(uint32_t pc, uint32_t instruction, const char* opcode, char* output, size_t output_length)
 {
     extract_rd();
     extract_rs1();
@@ -120,7 +120,7 @@ bool decode_i_2(uint32_t instruction, const char* opcode, char* output, size_t o
     return true;
 }
 
-bool decode_i_3(uint32_t instruction, const char* opcode, char* output, size_t output_length)
+bool decode_i_3(uint32_t pc, uint32_t instruction, const char* opcode, char* output, size_t output_length)
 {
     extract_rd();
     extract_rs1();
@@ -131,7 +131,7 @@ bool decode_i_3(uint32_t instruction, const char* opcode, char* output, size_t o
     return true;
 }
 
-bool decode_i_4(uint32_t instruction, const char* opcode, char* output, size_t output_length)
+bool decode_i_4(uint32_t pc, uint32_t instruction, const char* opcode, char* output, size_t output_length)
 {
     extract_rd();
     extract_rs1();
@@ -142,7 +142,7 @@ bool decode_i_4(uint32_t instruction, const char* opcode, char* output, size_t o
     return true;
 }
 
-bool decode_b(uint32_t instruction, const char* opcode, char* output, size_t output_length)
+bool decode_b(uint32_t pc, uint32_t instruction, const char* opcode, char* output, size_t output_length)
 {
     extract_rs1();
     extract_rs2();
@@ -153,7 +153,7 @@ bool decode_b(uint32_t instruction, const char* opcode, char* output, size_t out
     return true;
 }
 
-bool decode_s(uint32_t instruction, const char* opcode, char* output, size_t output_length)
+bool decode_s(uint32_t pc, uint32_t instruction, const char* opcode, char* output, size_t output_length)
 {
     extract_rs1();
     extract_rs2();
@@ -164,7 +164,7 @@ bool decode_s(uint32_t instruction, const char* opcode, char* output, size_t out
     return true;
 }
 
-bool decode_r(uint32_t instruction, const char* opcode, char* output, size_t output_length)
+bool decode_r(uint32_t pc, uint32_t instruction, const char* opcode, char* output, size_t output_length)
 {
     extract_rd();
     extract_rs1();
@@ -175,7 +175,7 @@ bool decode_r(uint32_t instruction, const char* opcode, char* output, size_t out
     return true;
 }
 
-bool decode_fence(uint32_t instruction, const char* opcode, char* output, size_t output_length)
+bool decode_fence(uint32_t pc, uint32_t instruction, const char* opcode, char* output, size_t output_length)
 {
     extract_pred();
     extract_succ();
@@ -191,14 +191,14 @@ bool decode_fence(uint32_t instruction, const char* opcode, char* output, size_t
     return true;
 }
 
-bool decode_opcode_only(uint32_t instruction, const char* opcode, char* output, size_t output_length)
+bool decode_opcode_only(uint32_t pc, uint32_t instruction, const char* opcode, char* output, size_t output_length)
 {
     snprintf(output, output_length, "%s", opcode);
 
     return true;
 }
 
-bool decode_csr(uint32_t instruction, const char* opcode, char* output, size_t output_length)
+bool decode_csr(uint32_t pc, uint32_t instruction, const char* opcode, char* output, size_t output_length)
 {
     extract_rd();
     extract_rs1();
@@ -210,7 +210,7 @@ bool decode_csr(uint32_t instruction, const char* opcode, char* output, size_t o
     return true;
 }
 
-bool decode_csr_imm(uint32_t instruction, const char* opcode, char* output, size_t output_length)
+bool decode_csr_imm(uint32_t pc, uint32_t instruction, const char* opcode, char* output, size_t output_length)
 {
     extract_rd();
     extract_CSR_imm();

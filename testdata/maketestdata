@@ -1,2 +1,2 @@
 #!/bin/sh
-riscv32-esp-elf-as test.S && riscv32-esp-elf-objdump -d a.out | grep [0-9a-f]: | sed 's/^\([[:xdigit:]]\+\)\s\+/\1 /' | sed 's/\s*#.*//' > testdata
+riscv32-esp-elf-as test.S && riscv32-esp-elf-objdump -d a.out | grep [0-9a-f]: | sed 's/^\([[:xdigit:]]\+\)\s\+/\1 /' | sed 's/\s*#.*//' | sed 's/<.*>//'> testdata

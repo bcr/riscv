@@ -7,7 +7,7 @@
 #include "decode.h"
 #include "decode_handlers.h"
 
-typedef bool (*decode_func_t)(uint32_t instruction, const char* opcode, char* output, size_t output_length);
+typedef bool (*decode_func_t)(uint32_t pc, uint32_t instruction, const char* opcode, char* output, size_t output_length);
 
 struct instruction_entry
 {
@@ -73,7 +73,7 @@ static const struct instruction_entry instructions[] = {
     { .mask = 0 }
 };
 
-size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_length)
+size_t decode_one_instruction(uint32_t pc, uint32_t instruction, char* output, size_t output_length)
 {
     bool handled = false;
 
@@ -83,7 +83,7 @@ size_t decode_one_instruction(uint32_t instruction, char* output, size_t output_
     {
         if ((instruction & mover->mask) == mover->match)
         {
-            handled = mover->handler(instruction, mover->opcode, output, output_length);
+            handled = mover->handler(pc, instruction, mover->opcode, output, output_length);
             if (handled)
             {
                 break;

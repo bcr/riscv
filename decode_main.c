@@ -23,7 +23,7 @@ int main(void)
         }
         instruction = strtol(instruction_ptr + 1, NULL, 16);
 
-        decode_one_instruction(instruction, buffer, sizeof(buffer));
+        decode_one_instruction(address, instruction, buffer, sizeof(buffer));
         printf("%4x:\t%08x %s\n", address, instruction, buffer);
     }
 }
