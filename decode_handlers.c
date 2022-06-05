@@ -67,6 +67,7 @@ static const char* csr_to_name(uint16_t csr)
     return final_string;
 }
 
+#if 0
 static int32_t sign_extend(int32_t number, unsigned int bit)
 {
     int32_t return_number = number;
@@ -78,6 +79,7 @@ static int32_t sign_extend(int32_t number, unsigned int bit)
 
     return return_number;
 }
+#endif /* 0 */
 
 bool decode_u(uint32_t pc, uint32_t instruction, const char* opcode, char* output, size_t output_length)
 {
