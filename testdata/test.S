@@ -3,7 +3,7 @@ start:
     lui a0, 0x12345
     jal ra, 1
     jalr x2,0x123
-#    beq a0,a1,start # Also broken, PC relative
+    beq a0,a1,start
     lb x1,17(x2)
     lh x31,17(x30)
     lw x29,20(x28)

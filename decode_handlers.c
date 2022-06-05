@@ -148,7 +148,7 @@ bool decode_b(uint32_t pc, uint32_t instruction, const char* opcode, char* outpu
     extract_rs2();
     extract_B_imm();
 
-    snprintf(output, output_length, "%s\t%s,%s,%d", opcode, abi_register_names[rs1], abi_register_names[rs2], imm);
+    snprintf(output, output_length, "%s\t%s,%s,%d", opcode, abi_register_names[rs1], abi_register_names[rs2], pc + imm);
 
     return true;
 }
