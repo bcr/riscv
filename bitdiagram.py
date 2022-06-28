@@ -1,85 +1,91 @@
-input = """
-31 0000000
-24 rs2
-19 rs1
-14 000
-11 rd
-6 0110011
-"""
+import shutil
+import tempfile
 
-fields = []
+def modfile(filename: str):
+    # Make a temporary file for text read/write
+    temporary_file = tempfile.TemporaryFile('w+')
+    # Open the original file for text read/write
+    original_file = open(filename, 'r+')
+    # Copy all the contents of the original file to the temporary file
+    shutil.copyfileobj(original_file, temporary_file)
+    # Rewind the temporary file, this is the "input"
+    temporary_file.seek(0)
+    input_file = temporary_file
+    # Clear the original file, this is the "output"
+    original_file.seek(0)
+    original_file.truncate(0)
+    output_file = original_file
+    return (input_file, output_file)
 
-last_split = None
+(input_file, output_file) = modfile('test.input')
+with input_file, output_file:
+    # Copy lines until our section
+    for line in input_file:
+        print(line, end='', file=output_file)
+        if line.rstrip() == '\\subsubsection{Encoding}':
+            break
 
-for line in input.splitlines():
-    if not line:
-        continue
-    splitline = line.split()
-    splitline[0] = int(splitline[0])
-    if last_split:
-        last_split.append(last_split[0] - splitline[0])
-    fields.append(splitline)
-    last_split = splitline
+    for line in input_file:
+        print(line, end='', file=output_file)
+        if line.rstrip() == '\\iffalse':
+            break
 
-last_split.append(last_split[0] - -1)
 
-output = "LaTeX"
+    fields = []
 
-if output == "ASCII":
-    # ASCII output
-    spaces_per_bit = 2
+    last_split = None
 
-    for field in fields:
-        value = str(field[0])
-        print(value, end='')
-        print((field[2] * spaces_per_bit - len(value)) * ' ', end='')
+    # Parse our input until the end of the bit fields
+    for line in input_file:
+        print(line, end='', file=output_file)
+        line = line.rstrip()
+        if line == '\\fi':
+            break
+        splitline = line.split()
+        splitline[0] = int(splitline[0])
+        if last_split:
+            last_split.append(last_split[0] - splitline[0])
+        fields.append(splitline)
+        last_split = splitline
 
-    print()
+    last_split.append(last_split[0] - -1)
 
-    for field in fields:
-        print('+', end='')
-        print('-' * ((field[2] * spaces_per_bit) - 1), end='')
-
-    print('+')
-
-    for field in fields:
-        print(f"|{field[1]:^{(field[2] * spaces_per_bit) - 1}}", end='')
-        # print(f"{:^{field[1]}{field[2]}}")
-    print('|')
-
-    for field in fields:
-        print('+', end='')
-        print('-' * ((field[2] * spaces_per_bit) - 1), end='')
-
-    print('+')
-else:
     #LaTeX output
-    print('\\begin{tabular}{', end='')
+    print('\\begin{tabular}{', end='', file=output_file)
 
     max_bit = None
     for field in fields:
         max_bit = max_bit or field[0]
-        print(f'p{{{field[2] / max_bit * 0.9}\\textwidth}}', end='')
-    print('}')
+        print(f'p{{{field[2] / max_bit * 0.9}\\textwidth}}', end='', file=output_file)
+    print('}', file=output_file)
 
     first_field = True
     for field in fields:
         if not first_field:
-            print('&', end='')
+            print('&', end='', file=output_file)
         else:
             first_field = False
-        print(f'\\scriptsize{{{field[0]}}}', end='')
+        print(f'\\scriptsize{{{field[0]}}}', end='', file=output_file)
         # print(f'\\multicolumn{{1}}{{|l|}}{{{field[0]}}}', end='')
-    print('\\\\\\hline')
+    print('\\\\\\hline', file=output_file)
 
     first_field = True
     for field in fields:
         if not first_field:
-            print('&', end='')
+            print('&', end='', file=output_file)
         else:
             first_field = False
         # print(field[1], end='')
-        print(f'\\multicolumn{{1}}{{|c|}}{{\\texttt{{{field[1]}}}}}', end='')
-    print('\\\\\\hline')
+        print(f'\\multicolumn{{1}}{{|c|}}{{\\texttt{{{field[1]}}}}}', end='', file=output_file)
+    print('\\\\\\hline', file=output_file)
 
-    print('\\end{tabular}')
+    print('\\end{tabular}', file=output_file)
+
+    # Skip old stuff from original file
+    for line in input_file:
+        line = line.rstrip()
+        if line == '\\end{tabular}':
+            break
+
+    # Copy over any remainder
+    shutil.copyfileobj(input_file, output_file)
