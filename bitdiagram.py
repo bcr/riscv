@@ -1,6 +1,4 @@
 import fileinput
-import shutil
-import sys
 
 with fileinput.input(files=('test.input'), inplace=True) as input_file:
     # Copy lines until our section
