@@ -33,6 +33,18 @@ def output_latex(fields):
 
     print('\\end{tabular}')
 
+def output_latex_bytefield(fields):
+    #LaTeX output
+    print('\\begin{bytefield}[endianness=big,bitwidth=15pt]{32}')
+
+    line = ','.join(map(str, sorted(map(lambda f: f[0], fields))))
+    print(f'\\bitheader{{{line}}}\\\\')
+
+    for field in fields:
+        print(f'\\bitbox{{{field[2]}}}{{\\texttt{{{field[1]}}}}}')
+
+    print('\\end{bytefield}')
+
 with fileinput.input(files=('test.input'), inplace=True) as input_file:
     # Copy lines until our section
     for line in input_file:
@@ -65,7 +77,7 @@ with fileinput.input(files=('test.input'), inplace=True) as input_file:
         if re.search("Begin encoding output", line):
             break
 
-    output_latex(fields)
+    output_latex_bytefield(fields)
 
     # Skip old stuff from original file
     for line in input_file:
