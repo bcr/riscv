@@ -1,4 +1,5 @@
 import fileinput
+import re
 
 def output_latex(fields):
     #LaTeX output
@@ -36,14 +37,8 @@ with fileinput.input(files=('test.input'), inplace=True) as input_file:
     # Copy lines until our section
     for line in input_file:
         print(line, end='')
-        if line.rstrip() == '\\subsubsection{Encoding}':
+        if re.search("Begin encoding definition", line):
             break
-
-    for line in input_file:
-        print(line, end='')
-        if line.rstrip() == '\\iffalse':
-            break
-
 
     fields = []
 
@@ -53,7 +48,7 @@ with fileinput.input(files=('test.input'), inplace=True) as input_file:
     for line in input_file:
         print(line, end='')
         line = line.rstrip()
-        if line == '\\fi':
+        if re.search("End encoding definition", line):
             break
         splitline = line.split()
         splitline[0] = int(splitline[0])
@@ -64,12 +59,18 @@ with fileinput.input(files=('test.input'), inplace=True) as input_file:
 
     last_split.append(last_split[0] - -1)
 
+    # Copy lines until our output section
+    for line in input_file:
+        print(line, end='')
+        if re.search("Begin encoding output", line):
+            break
+
     output_latex(fields)
 
     # Skip old stuff from original file
     for line in input_file:
-        line = line.rstrip()
-        if line == '\\end{tabular}':
+        if re.search("End encoding output", line):
+            print(line, end='')
             break
 
     # Copy over any remainder
