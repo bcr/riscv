@@ -1,3 +1,4 @@
 *.o
 decode_main
 a.out
+build/
